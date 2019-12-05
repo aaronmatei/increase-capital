@@ -1,0 +1,125 @@
+<% extend('layout') -%>
+
+<h1>Welcome to increase capital <%= name %></h1>
+<h4>This page contains the loan information for customers</h4>
+
+<div>
+	<form action="" class="form-inline">
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">From: </label>
+				</div>
+
+				<input class="form-control" type="date" value="" id="example-date-input" />
+			</div>
+		</div>
+
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">To: </label>
+				</div>
+
+				<input class="form-control" type="date" value="" id="example-date-input" />
+			</div>
+		</div>
+
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Customer Name</label>
+				</div>
+				<input type="text" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Loan Date</label>
+				</div>
+
+				<input class="form-control" type="date" value="" id="example-date-input" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Due Date Date</label>
+				</div>
+
+				<input class="form-control" type="date" value="" id="example-date-input" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Loan Code</label>
+				</div>
+
+				<input type="text" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Mobilr Money Reference</label>
+				</div>
+				<input type="text" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Loan Amount</label>
+				</div>
+				<input type="text" class="form-control" />
+			</div>
+		</div>
+
+		<span>&nbsp;</span>
+		<div class="form-group">
+			<button type="submit" class="btn btn-info">Submit</button>
+		</div>
+	</form>
+</div>
+
+<table class="table">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col">id</th>
+			<th scope="col">Loan Date</th>
+			<th scope="col">Due Date</th>
+			<th scope="col">Loan Code</th>
+			<th scope="col">Loan Amount</th>
+			<th scope="col">Customer Station</th>
+			<th scope="col">Customer ID</th>
+			<th scope="col">Loan Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% if(data.length){ for(let i=0; i < 10; i++) { %>
+
+		<tr>
+			<th scope="row"><%= (i + 1) %></th>
+			<td><%= moment(data[i].loan_date).format('YYYY-MM-DD') %></td>
+			<td><%= moment(data[i].due_date).format('YYYY-MM-DD') %></td>
+			<td><%= data[i].loan_code %></td>
+			<td><%= data[i].loan_amount %></td>
+			<td><%= data[i].customer_station %></td>
+			<td><%= data[i].customer_id %></td>
+			<td><%= data[i].loan_status %></td>
+		</tr>
+
+		<%} } else { %>
+		<tr>
+			<td>No records</td>
+		</tr>
+
+		<% } %>
+	</tbody>
+</table>
+<div class="form-group">
+	<a href="/loans"> <button type="submit" class="btn btn-info">Download excel</button></a>
+	<button type="submit" class="btn btn-info">Download pdf</button>
+</div>

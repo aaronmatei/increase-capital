@@ -1,0 +1,8 @@
+<% extend('layout') -%>
+
+<h1>Welcome to increase capital <%= name %></h1>
+
+<form id="uploadForm" enctype="multipart/form-data" action="upload" method="POST">
+	<input type="file" name="file" /> Upload
+	<input type="submit" value="Upload" name="submit" />
+</form>
