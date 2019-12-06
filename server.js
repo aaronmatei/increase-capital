@@ -16,7 +16,12 @@ const db = mysql.createConnection({
 	user: "root",
 	password: "",
 	database: "increase",
+	dateStrings: true,
 });
+// use body-parser
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // set view engine to ejs
 
@@ -24,12 +29,11 @@ app.set("port", process.env.PORT || 5000);
 app.engine("ejs", require("express-ejs-extend"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname + "/views"));
-// use body-parser
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(__dirname + "/public"));
 
-//
+//configuration
+app.use(bodyParser.json());
 
 // Create DB
 app.get("/createdb", (req, res) => {
@@ -188,13 +192,13 @@ app.get("/loans", (req, res) => {
 	db.query(sql, (err, result, fields) => {
 		if (err) throw err;
 
-		const data = json2Array(result, fields);
-		const buffer = nodexlsx.build([{ name: "Loans", data: data }]);
-		// Write the buffer to a file
-		fs.writeFile("loansdata.xlsx", buffer, fs_err => {
-			if (fs_err) throw fs_err;
-			console.log("Excel file created...");
-		});
+		// const data = json2Array(result, fields);
+		// const buffer = nodexlsx.build([{ name: "Loans", data: data }]);
+		// // Write the buffer to a file
+		// fs.writeFile("loansdata.xlsx", buffer, fs_err => {
+		// 	if (fs_err) throw fs_err;
+		// 	console.log("Excel file created...");
+		// });
 
 		let name = "Aronique";
 
@@ -228,6 +232,29 @@ const json2Array = (result, fields) => {
 
 	return out;
 };
+
+// Filtering
+app.post("/filtered", (req, res) => {
+	let from_date = req.body.from_date;
+	let to_date = req.body.to_date;
+	let customer_name = req.body.customer_name;
+	let loan_date = req.body.loan_date;
+	let due_date = req.body.due_date;
+	let loan_code = req.body.loan_code;
+	let loan_amount = req.body.loan_amount;
+	let customer_station = req.body.customer_station;
+	let customer_id = req.body.customer_id;
+	let loan_status = req.body.loan_status;
+
+	let sql = `SELECT * FROM loans WHERE DATE_FORMAT(loan_date, '%Y-%m-%d') = ? && loan_amount = ? && customer_station = ? && loan_status = ?`;
+
+	db.query(sql, [loan_date, loan_amount, customer_station, loan_status], (err, result, fields) => {
+		if (err) throw err;
+		console.log(loan_date);
+
+		res.render("results", { data: result, moment: moment });
+	});
+});
 
 // Query by id
 app.get("/results/:id", (req, res) => {

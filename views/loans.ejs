@@ -4,14 +4,14 @@
 <h4>This page contains the loan information for customers</h4>
 
 <div>
-	<form action="" class="form-inline">
+	<form action="/filtered" class="form-inline" method="POST">
 		<div class="form-group col-4 mb-2">
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<label class="input-group-text" for="inputGroupSelect01">From: </label>
 				</div>
 
-				<input class="form-control" type="date" value="" id="example-date-input" />
+				<input class="form-control" name="from_date" type="date" value="" id="example-date-input" />
 			</div>
 		</div>
 
@@ -21,7 +21,7 @@
 					<label class="input-group-text" for="inputGroupSelect01">To: </label>
 				</div>
 
-				<input class="form-control" type="date" value="" id="example-date-input" />
+				<input class="form-control" name="to_date" type="date" value="" id="example-date-input" />
 			</div>
 		</div>
 
@@ -30,7 +30,7 @@
 				<div class="input-group-prepend">
 					<label class="input-group-text" for="inputGroupSelect01">Customer Name</label>
 				</div>
-				<input type="text" class="form-control" />
+				<input type="text" name="customer_name" class="form-control" />
 			</div>
 		</div>
 		<div class="form-group col-4 mb-2">
@@ -39,7 +39,7 @@
 					<label class="input-group-text" for="inputGroupSelect01">Loan Date</label>
 				</div>
 
-				<input class="form-control" type="date" value="" id="example-date-input" />
+				<input class="form-control" name="loan_date" type="date" value="" id="example-date-input" />
 			</div>
 		</div>
 		<div class="form-group col-4 mb-2">
@@ -48,7 +48,7 @@
 					<label class="input-group-text" for="inputGroupSelect01">Due Date Date</label>
 				</div>
 
-				<input class="form-control" type="date" value="" id="example-date-input" />
+				<input class="form-control" name="due_date" type="date" value="" id="example-date-input" />
 			</div>
 		</div>
 		<div class="form-group col-4 mb-2">
@@ -57,7 +57,7 @@
 					<label class="input-group-text" for="inputGroupSelect01">Loan Code</label>
 				</div>
 
-				<input type="text" class="form-control" />
+				<input type="text" name="loan_code" class="form-control" />
 			</div>
 		</div>
 		<div class="form-group col-4 mb-2">
@@ -65,7 +65,7 @@
 				<div class="input-group-prepend">
 					<label class="input-group-text" for="inputGroupSelect01">Mobilr Money Reference</label>
 				</div>
-				<input type="text" class="form-control" />
+				<input type="text" name="mobile_reference" class="form-control" />
 			</div>
 		</div>
 		<div class="form-group col-4 mb-2">
@@ -73,7 +73,31 @@
 				<div class="input-group-prepend">
 					<label class="input-group-text" for="inputGroupSelect01">Loan Amount</label>
 				</div>
-				<input type="text" class="form-control" />
+				<input type="text" name="loan_amount" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Customer Station</label>
+				</div>
+				<input type="text" name="customer_station" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Customer ID</label>
+				</div>
+				<input type="text" name="customer_id" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group col-4 mb-2">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Loan Status</label>
+				</div>
+				<input type="text" name="loan_status" class="form-control" />
 			</div>
 		</div>
 
@@ -102,8 +126,8 @@
 
 		<tr>
 			<th scope="row"><%= (i + 1) %></th>
-			<td><%= moment(data[i].loan_date).format('YYYY-MM-DD') %></td>
-			<td><%= moment(data[i].due_date).format('YYYY-MM-DD') %></td>
+			<td><%= moment(data[i].loan_date).format('DD-MM-YYYY') %></td>
+			<td><%= moment(data[i].due_date).format('DD-MM-YYYY') %></td>
 			<td><%= data[i].loan_code %></td>
 			<td><%= data[i].loan_amount %></td>
 			<td><%= data[i].customer_station %></td>

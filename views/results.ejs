@@ -1,0 +1,44 @@
+<% extend('layout') -%>
+
+<h1>Welcome to increase capital</h1>
+<h4>This page contains the loan information for customers</h4>
+
+<table class="table">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col">id</th>
+			<th scope="col">Loan Date</th>
+			<th scope="col">Due Date</th>
+			<th scope="col">Loan Code</th>
+			<th scope="col">Loan Amount</th>
+			<th scope="col">Customer Station</th>
+			<th scope="col">Customer ID</th>
+			<th scope="col">Loan Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% if(data.length){ for(let i=0; i < 10; i++) { %>
+
+		<tr>
+			<th scope="row"><%= (i + 1) %></th>
+			<td><%= moment(data[i].loan_date).format('DD-MM-YYYY') %></td>
+			<td><%= moment(data[i].due_date).format('DD-MM-YYYY') %></td>
+			<td><%= data[i].loan_code %></td>
+			<td><%= data[i].loan_amount %></td>
+			<td><%= data[i].customer_station %></td>
+			<td><%= data[i].customer_id %></td>
+			<td><%= data[i].loan_status %></td>
+		</tr>
+
+		<%} } else { %>
+		<tr>
+			<td>No records</td>
+		</tr>
+
+		<% } %>
+	</tbody>
+</table>
+<div class="form-group">
+	<a href="/loans"> <button type="submit" class="btn btn-info">Download excel</button></a>
+	<button type="submit" class="btn btn-info">Download pdf</button>
+</div>
