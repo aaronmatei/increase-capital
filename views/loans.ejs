@@ -1,7 +1,7 @@
 <% extend('layout') -%>
 
 <h1>Welcome to increase capital <%= name %></h1>
-<h4>This page contains the loan information for customers</h4>
+
 
 <div>
 	<form action="/filtered" class="form-inline" method="POST">
@@ -143,7 +143,8 @@
 		<% } %>
 	</tbody>
 </table>
-<div class="form-group">
-	<a href="/loans"> <button type="submit" class="btn btn-info">Download excel</button></a>
-	<button type="submit" class="btn btn-info">Download pdf</button>
+<div class="button-box" style="text-align: right;">
+	<a href="/xlsdownload" class="btn btn-success" id="btnExportToXls">Export as XLS</a>
+	<a href="/csvdownload" class="btn btn-success" id="btnExportToCsv">Export as CSV</a>
+	<a href="/pdfdownload" class="btn btn-info">Export as PDF</a>
 </div>

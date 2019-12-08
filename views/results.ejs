@@ -1,9 +1,8 @@
 <% extend('layout') -%>
 
-<h1>Welcome to increase capital</h1>
-<h4>This page contains the loan information for customers</h4>
+<h1>Results </h1>
 
-<table class="table">
+<table class="table" id="filtered_results">
 	<thead class="thead-dark">
 		<tr>
 			<th scope="col">id</th>
@@ -16,7 +15,7 @@
 			<th scope="col">Loan Status</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody id="results_body">
 		<% if(data.length){ for(let i=0; i < 10; i++) { %>
 
 		<tr>
@@ -38,7 +37,10 @@
 		<% } %>
 	</tbody>
 </table>
-<div class="form-group">
-	<a href="/loans"> <button type="submit" class="btn btn-info">Download excel</button></a>
-	<button type="submit" class="btn btn-info">Download pdf</button>
+
+<div class="button-box" style="text-align: right;">
+	<a href="/xlsdownload" class="btn btn-success" id="btnExportToXls">Export as XLS</a>
+	<a href="/csvdownload" class="btn btn-success" id="btnExportToCsv">Export as CSV</a>
+	<a href="/pdfdownload" class="btn btn-info">Export as PDF</a>
 </div>
+

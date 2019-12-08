@@ -9,6 +9,11 @@ const xlsxtojson = require("xlsx-to-json-lc");
 const moment = require("moment");
 const fs = require("fs");
 const nodexlsx = require("node-xlsx");
+const flash = require("connect-flash");
+const cors = require("cors");
+const pdf = require("html-pdf");
+
+const puppeteer = require("puppeteer");
 
 const mysql = require("mysql");
 const db = mysql.createConnection({
@@ -19,6 +24,7 @@ const db = mysql.createConnection({
 	dateStrings: true,
 });
 // use body-parser
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -32,8 +38,10 @@ app.set("views", path.join(__dirname + "/views"));
 
 app.use(express.static(__dirname + "/public"));
 
-//configuration
-app.use(bodyParser.json());
+const downloadPDF = require("./routes/downloads/downloadpdf");
+const downloadXLS = require("./routes/downloads/downloadxls");
+app.use(downloadPDF);
+app.use(downloadXLS);
 
 // Create DB
 app.get("/createdb", (req, res) => {
@@ -246,7 +254,7 @@ app.post("/filtered", (req, res) => {
 	let customer_id = req.body.customer_id;
 	let loan_status = req.body.loan_status;
 
-	let sql = `SELECT * FROM loans WHERE DATE_FORMAT(loan_date, '%Y-%m-%d') = ? && loan_amount = ? && customer_station = ? && loan_status = ?`;
+	let sql = `SELECT * FROM loans WHERE DATE_FORMAT(loan_date, '%Y-%m-%d') = ? OR loan_amount = ? OR customer_station = ? && loan_status = ?`;
 
 	db.query(sql, [loan_date, loan_amount, customer_station, loan_status], (err, result, fields) => {
 		if (err) throw err;
