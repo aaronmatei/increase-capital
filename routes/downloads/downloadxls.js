@@ -19,11 +19,11 @@ router.get("/xlsdownload", (req, res) => {
 		const data = json2Array(result, fields);
 		const buffer = nodexlsx.build([{ name: "Loans", data: data }]);
 		// Write the buffer to a file
-		fs.writeFile("uploads/xls/loansdata.xlsx", buffer, fs_err => {
+		fs.writeFile("uploads/xls/results.xlsx", buffer, fs_err => {
 			if (fs_err) throw fs_err;
 		});
 	});
-	res.send("Excel File created");
+	res.send("Excel File created. uploads/xls/results.xlsx");
 });
 
 // function to convert json to array

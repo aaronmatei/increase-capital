@@ -10,7 +10,7 @@ router.get("/pdfdownload", (req, res) => {
 		const browser = await puppeteer.launch();
 		const page = await browser.newPage();
 		const options = {
-			path: "uploads/pdfs/result.pdf",
+			path: "uploads/pdfs/results.pdf",
 			format: "A4",
 		};
 		await page.goto("http://localhost:5000/loans", { waitUntil: "networkidle2" });
@@ -18,7 +18,7 @@ router.get("/pdfdownload", (req, res) => {
 		await browser.close();
 	};
 	createPdf();
-	res.send(`pdf created successfully`);
+	res.send(`pdf created successfully. Check ~/uploads/pdfs/results.pdf `);
 });
 
 module.exports = router;

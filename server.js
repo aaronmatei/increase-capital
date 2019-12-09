@@ -7,13 +7,7 @@ const multer = require("multer");
 const xlstojson = require("xls-to-json-lc");
 const xlsxtojson = require("xlsx-to-json-lc");
 const moment = require("moment");
-const fs = require("fs");
-const nodexlsx = require("node-xlsx");
-const flash = require("connect-flash");
 const cors = require("cors");
-const pdf = require("html-pdf");
-
-const puppeteer = require("puppeteer");
 
 const mysql = require("mysql");
 const db = mysql.createConnection({
@@ -99,9 +93,85 @@ app.get("/createloanstable", (req, res) => {
 	});
 });
 
+// upload excel with data
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, "./uploads/dbexcel");
+	},
+	filename: (req, file, cb) => {
+		const datetimestamp = Date.now();
+		cb(
+			null,
+			file.fieldname +
+				"-" +
+				datetimestamp +
+				"." +
+				file.originalname.split(".")[file.originalname.split(".").length - 1]
+		);
+	},
+});
+
+const upload = multer({
+	storage: storage,
+	fileFilter: (req, file, callback) => {
+		// file filter
+		if (["xls", "xlsx"].indexOf(file.originalname.split(".")[file.originalname.split(".").length - 1]) === -1) {
+			return callback(new Error("Wrong extension type"));
+		}
+		callback(null, true);
+	},
+}).single("file");
+
+// API that will upload the excel file
+app.post("/upload", (req, res) => {
+	let exceltojson;
+	upload(req, res, err => {
+		if (err) {
+			res.json({ error_code: 1, err_desc: err });
+			return;
+		}
+		// req.file contains the file info
+		if (!req.file) {
+			res.json({ error_code: 1, err_desc: "No file uploaded" });
+		}
+		// start the conversion process
+		// check extension
+		if (req.file.originalname.split(".")[req.file.originalname.split(".").length - 1] === "xlsx") {
+			exceltojson = xlsxtojson;
+		} else {
+			exceltojson = xlstojson;
+		}
+
+		try {
+			exceltojson(
+				{
+					input: req.file.path, //where the file was uploaded
+					output: null, // we dont need output.json
+					lowerCaseHeaders: true,
+				},
+				(err, result) => {
+					if (err) {
+						return res.json({ error_code: 1, err_desc: err, data: null });
+					}
+					res.json({ error_code: 0, err_desc: null, data: result });
+					console.log(data);
+				}
+			);
+		} catch (err) {
+			res.json({ error_code: 1, err_desc: "Excel file uploaded is corrupted" });
+		}
+
+		res.json({ error_code: 0, err_desc: null });
+	});
+});
+
+app.get("/uploadfile", (req, res) => {
+	res.render("uploads");
+});
+
 // Insert Stations into the table
 app.get("/insertsn", (req, res) => {
-	const wb = xlsx.readFile(path.join(__dirname + "/uploads/file-1575501862380.xlsx"), { cellDates: true });
+	const wb = xlsx.readFile(path.join(__dirname + "/uploads/dbexcel/file-1575875523773.xlsx"), { cellDates: true });
 	var ws1 = wb.Sheets["unit_station_names"];
 
 	const dataforws1 = xlsx.utils.sheet_to_json(ws1);
@@ -119,7 +189,7 @@ app.get("/insertsn", (req, res) => {
 });
 // Insert loan status values into the table
 app.get("/insertls", (req, res) => {
-	const wb = xlsx.readFile(path.join(__dirname + "/uploads/file-1575501862380.xlsx"), { cellDates: true });
+	const wb = xlsx.readFile(path.join(__dirname + "/uploads/dbexcel/file-1575875523773.xlsx"), { cellDates: true });
 
 	var ws2 = wb.Sheets["loan_status"];
 
@@ -138,7 +208,7 @@ app.get("/insertls", (req, res) => {
 });
 // Insert loans Values into the table
 app.get("/insertloans", (req, res) => {
-	const wb = xlsx.readFile(path.join(__dirname + "/uploads/file-1575501862380.xlsx"), { cellDates: true });
+	const wb = xlsx.readFile(path.join(__dirname + "/uploads/dbexcel/file-1575875523773.xlsx"), { cellDates: true });
 
 	var ws3 = wb.Sheets["loans"];
 
@@ -163,15 +233,6 @@ app.get("/insertloans", (req, res) => {
 		if (err) throw err;
 		res.send("Records inserted");
 	});
-
-	// const downloadLoansData = () => {
-	// 	const loansWB = xlsx.utils.book_new();
-	// 	const newWS = xlsx.utils.json_to_sheet(dataforws3);
-	// 	xlsx.utils.book_append_sheet(loansWB, newWS, "loans");
-	// 	xlsx.writeFile(loansWB, "loans.xlsx");
-	// };
-	// const name = "Aronique";
-	// res.render("loans", { download: downloadLoansData, name: name });
 });
 
 // query station_names from the db
@@ -200,46 +261,11 @@ app.get("/loans", (req, res) => {
 	db.query(sql, (err, result, fields) => {
 		if (err) throw err;
 
-		// const data = json2Array(result, fields);
-		// const buffer = nodexlsx.build([{ name: "Loans", data: data }]);
-		// // Write the buffer to a file
-		// fs.writeFile("loansdata.xlsx", buffer, fs_err => {
-		// 	if (fs_err) throw fs_err;
-		// 	console.log("Excel file created...");
-		// });
-
 		let name = "Aronique";
 
 		res.render("loans", { name: name, data: result, moment: moment });
 	});
 });
-
-// function to convert json to array
-
-const json2Array = (result, fields) => {
-	let out = [];
-	let temp = [];
-	// Create headers array
-	fields.forEach(item => {
-		temp.push(item.name);
-	});
-	// temp array works as column headers in .xlsx file
-	out.push(temp);
-
-	result.forEach(item => {
-		out.push([
-			item.loan_date,
-			item.due_date,
-			item.loan_code,
-			item.loan_amount,
-			item.customer_station,
-			item.customer_id,
-			item.loan_status,
-		]);
-	});
-
-	return out;
-};
 
 // Filtering
 app.post("/filtered", (req, res) => {
@@ -291,83 +317,6 @@ app.get("/deleteresult/:id", (req, res) => {
 		console.log(result);
 	});
 	res.send(`Record for id ${req.params.id}  deleted....`);
-});
-
-// uploads
-const storage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, "./uploads/");
-	},
-	filename: (req, file, cb) => {
-		const datetimestamp = Date.now();
-		cb(
-			null,
-			file.fieldname +
-				"-" +
-				datetimestamp +
-				"." +
-				file.originalname.split(".")[file.originalname.split(".").length - 1]
-		);
-	},
-});
-
-const upload = multer({
-	storage: storage,
-	fileFilter: (req, file, callback) => {
-		// file filter
-		if (["xls", "xlsx"].indexOf(file.originalname.split(".")[file.originalname.split(".").length - 1]) === -1) {
-			return callback(new Error("Wrong extension type"));
-		}
-		callback(null, true);
-	},
-}).single("file");
-
-// API that will upload the files
-app.post("/upload", (req, res) => {
-	let exceltojson;
-	upload(req, res, err => {
-		if (err) {
-			res.json({ error_code: 1, err_desc: err });
-			return;
-		}
-		// req.file contains the file info
-		if (!req.file) {
-			res.json({ error_code: 1, err_desc: "No file uploaded" });
-		}
-		// start the conversion process
-		// check extension
-		if (req.file.originalname.split(".")[req.file.originalname.split(".").length - 1] === "xlsx") {
-			exceltojson = xlsxtojson;
-		} else {
-			exceltojson = xlstojson;
-		}
-
-		try {
-			exceltojson(
-				{
-					input: req.file.path, //where the file was uploaded
-					output: null, // we dont need output.json
-					lowerCaseHeaders: true,
-				},
-				(err, result) => {
-					if (err) {
-						return res.json({ error_code: 1, err_desc: err, data: null });
-					}
-					res.json({ error_code: 0, err_desc: null, data: result });
-					console.log(data);
-				}
-			);
-		} catch (err) {
-			res.json({ error_code: 1, err_desc: "Excel file uploaded is corrupted" });
-		}
-
-		res.json({ error_code: 0, err_desc: null });
-	});
-});
-
-app.get("/uploadfile", (req, res) => {
-	const name = "Uploads";
-	res.render("uploads", { name: name });
 });
 
 app.listen(5000, () => {
