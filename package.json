@@ -19,7 +19,7 @@
     "express-ejs-extend": "0.0.1",
     "express-fileupload": "^1.1.6",
     "express-myconnection": "^1.0.4",
-    "fast-csv": "^3.4.0",
+    "fast-csv": "^4.3.6",
     "fontawesome": "^5.6.3",
     "html-pdf": "^2.2.0",
     "jquery": "^3.4.1",
