@@ -29,7 +29,7 @@
     "node-xlsx": "^0.15.0",
     "nodemon": "^2.0.1",
     "pdfmake": "^0.1.62",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "puppeteer": "^2.0.0",
     "req-flash": "0.0.3",
     "xls-to-json-lc": "^0.3.4",
